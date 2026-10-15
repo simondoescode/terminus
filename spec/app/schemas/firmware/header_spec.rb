@@ -31,5 +31,9 @@ RSpec.describe Terminus::Schemas::Firmware::Header do
         HTTP_WIDTH: 800
       )
     end
+
+    it "accepts an empty model header from device setup" do
+      expect(contract.call(firmware_headers.merge("HTTP_MODEL" => ""))).to be_success
+    end
   end
 end

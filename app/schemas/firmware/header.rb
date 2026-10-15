@@ -12,7 +12,7 @@ module Terminus
         optional(:HTTP_HOST).filled :string
         optional(:HTTP_ID).filled Types::MACAddress
         optional(:HTTP_IMAGE_CACHED).filled :bool
-        optional(:HTTP_MODEL).filled :string
+        optional(:HTTP_MODEL).maybe :string
         optional(:HTTP_PERCENT_CHARGED).filled :float
         optional(:HTTP_REFRESH_RATE).filled :integer
         optional(:HTTP_RSSI).filled :integer

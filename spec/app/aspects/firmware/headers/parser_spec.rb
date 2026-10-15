@@ -68,6 +68,13 @@ RSpec.describe Terminus::Aspects::Firmware::Headers::Parser do
       )
     end
 
+    it "uses the fallback model when the model header is blank" do
+      result = parser.call(firmware_headers.merge("HTTP_MODEL" => ""))
+
+      expect(result).to be_success
+      expect(result.value!.model_name).to eq("og_plus")
+    end
+
     it "answers failure with invalid headers" do
       firmware_headers["HTTP_ID"] = "bogus"
 

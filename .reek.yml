@@ -122,6 +122,8 @@ detectors:
     exclude:
       - Terminus::Refines::Icalendar#self.map_3339
       - Terminus::Refines::Icalendar#self.rfc_3339
+  UnusedParameters:
+    enabled: false
   UtilityFunction:
     exclude:
       - Terminus::Refines::Icalender
@@ -131,3 +133,4 @@ detectors:
       - Terminus::Aspects::Errors::Problem#foreign_key
       - Terminus::Aspects::Errors::Problem#out_of_range
       - Terminus::Aspects::Liquid::Filters#json
+

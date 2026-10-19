@@ -7,6 +7,7 @@ require "dry/monads"
 require "functionable"
 require "json"
 require "nori"
+require "refinements/string"
 
 module Terminus
   module Aspects
@@ -17,6 +18,7 @@ module Terminus
         extend Functionable
 
         using Refines::Icalendar::Calendar
+        using Refinements::String
 
         def from_calendar content, parser: Icalendar::Parser
           Success StringIO.new(content)
@@ -38,13 +40,13 @@ module Terminus
           content = String(content).empty? ? Core::EMPTY_ARRAY : JSON(content)
           Success content
         rescue ::JSON::ParserError => error
-          Failure "#{error.message.capitalize}."
+          Failure "#{error.message.up}."
         end
 
         def from_text content
           Success String(content).split
         rescue ArgumentError => error
-          Failure "#{error.message.capitalize}."
+          Failure "#{error.message.up}."
         end
 
         def from_xml content, nori: Nori.new(parser: :rexml)

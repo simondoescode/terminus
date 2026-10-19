@@ -17,12 +17,12 @@ detectors:
       - Terminus::Actions::Extensions::Update
       - Terminus::Aspects::Croner
       - Terminus::Aspects::Errors::Problem
-      - Terminus::Aspects::Screens::Shoter
       - Terminus::Repositories::Screen
   DuplicateMethodCall:
     exclude:
       - Terminus::Aspects::Devices::Provisioner#create
       - Terminus::Aspects::Extensions::Exchanges::RequestBuilder#render
+      - Terminus::Aspects::Screens::Shoter#save
       - Terminus::Views::Helpers#default_option
   FeatureEnvy:
     exclude:

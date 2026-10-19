@@ -3,7 +3,7 @@
 require "dry/monads"
 require "ferrum"
 require "initable"
-require "refinements/pathname"
+require "refinements/hash"
 require "refinements/string"
 
 module Terminus
@@ -27,7 +27,6 @@ module Terminus
         ]
         include Dry::Monads[:result]
 
-        using Refinements::Pathname
         using Refinements::String
         using Refinements::Hash
 
@@ -49,22 +48,21 @@ module Terminus
         def save content, viewport, output_path
           log_options
           instance = browser.new options
-          page = instance.create_page
 
-          Pathname.mktmpdir do |work_dir|
-            page.content = work_dir.join("content.html").write(content).read
-            page.set_viewport(**viewport)
-            page.network.wait_for_idle duration: 5
-            page.screenshot path: output_path.to_s
-          end
+          page = instance.create_page
+          page.content = content
+          page.set_viewport(**viewport)
+          page.network.wait_for_idle duration: 5
+          page.screenshot path: output_path.to_s
 
           instance.quit
           Success output_path
-        rescue Ferrum::BrowserError => error then handle_browser_error instance, error
+        rescue Ferrum::BrowserError => error then handle_browser_error error
         rescue Ferrum::DeadBrowserError => error then handle_dead_browser_error error
-        rescue Ferrum::TimeoutError => error then handle_timeout_error instance, error
-        rescue Ferrum::NoSuchTargetError => error then handle_no_such_target_error instance, error
+        rescue Ferrum::TimeoutError => error then handle_timeout_error error
+        rescue Ferrum::NoSuchTargetError => error then handle_no_such_target_error error
         rescue Ferrum::ProcessTimeoutError => error then handle_process_timeout_error error
+        ensure instance.quit if instance
         end
 
         def log_options
@@ -76,8 +74,7 @@ module Terminus
           end
         end
 
-        def handle_browser_error instance, error
-          instance.quit
+        def handle_browser_error error
           logger.debug { "Screen shoter has browser error: #{error.message}" }
 
           Failure "Unable to capture screenshot due to an instance error such as " \
@@ -92,8 +89,7 @@ module Terminus
                   "or a resource limitation has been hit."
         end
 
-        def handle_timeout_error instance, error
-          instance.quit if instance
+        def handle_timeout_error error
           logger.debug { "Screen shoter has timeout: #{error.message}" }
 
           seconds = options.fetch :timeout, 0
@@ -103,8 +99,7 @@ module Terminus
                   + "This might have happened due to the page taking a long time to load."
         end
 
-        def handle_no_such_target_error instance, error
-          instance.quit
+        def handle_no_such_target_error error
           logger.debug { "Screen shoter has no such target: #{error.message}" }
           Failure "Unable to capture screenshot because the page closed or crashed."
         end

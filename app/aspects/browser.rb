@@ -1,0 +1,119 @@
+# frozen_string_literal: true
+
+require "dry/monads"
+require "ferrum"
+require "initable"
+require "refinements/hash"
+require "refinements/string"
+
+module Terminus
+  module Aspects
+    # A headless Chromium browser.
+    class Browser
+      include Deps[:settings, :i18n, :logger]
+      include Initable[
+        options_map: {
+          ferrum_default_timeout: :timeout,
+          ferrum_process_timeout: :process_timeout,
+          ferrum_javascript_errors: :js_errors
+        },
+        browser_options: {
+          "disable-dev-shm-usage" => nil,
+          "disable-gpu" => nil,
+          "hide-scrollbar" => nil,
+          "no-sandbox" => nil,
+          "process-per-site" => nil
+        },
+        maximum_renders: 100
+      ]
+      include Dry::Monads[:result]
+
+      using Refinements::Hash
+      using Refinements::String
+
+      def initialize(client: Ferrum::Browser, renders: 0, **)
+        super(**)
+        @application_options = settings.to_h.slice(*options_map.keys).transform_keys!(options_map)
+        @client = client.new application_options.merge!(browser_options:)
+        @renders = renders
+
+        log_options
+      rescue Ferrum::ProcessTimeoutError then handle_process_timeout_error
+      end
+
+      def call(&)
+        client.create_page(&)
+        maybe_restart
+        Success()
+      rescue Ferrum::BrowserError then handle_browser_error
+      rescue Ferrum::DeadBrowserError => error then handle_dead_browser_error error
+      rescue Ferrum::TimeoutError then handle_timeout_error
+      rescue Ferrum::NoSuchTargetError => error then handle_no_such_target_error error
+      end
+
+      private
+
+      attr_accessor :renders
+      attr_reader :application_options, :client
+
+      def log_options
+        logger.debug do
+          {
+            tags: [application_options, browser_options],
+            message: i18n.translate("aspects.browser.options")
+          }
+        end
+      end
+
+      def maybe_restart
+        self.renders += 1
+
+        return if renders < maximum_renders
+
+        client.restart
+        logger.debug { i18n.translate "aspects.browser.maximum_renders", maximum: maximum_renders }
+      end
+
+      def handle_process_timeout_error
+        logger.fatal do
+          seconds = application_options.fetch :process_timeout, 0
+
+          i18n.translate "aspects.browser.process_timeout",
+                         seconds:,
+                         label: "second".pluralize("s", seconds)
+        end
+      end
+
+      def handle_browser_error
+        message = i18n.translate "aspects.browser.error"
+
+        logger.debug { message }
+        Failure message
+      end
+
+      def handle_dead_browser_error error
+        message = i18n.translate "aspects.browser.dead", message: error.message
+
+        logger.debug { message }
+        Failure message
+      end
+
+      def handle_timeout_error
+        seconds = application_options.fetch :timeout, 0
+        message = i18n.translate "aspects.browser.timeout",
+                                 seconds:,
+                                 label: "second".pluralize("s", seconds)
+
+        logger.debug { message }
+        Failure message
+      end
+
+      def handle_no_such_target_error error
+        message = i18n.translate "aspects.browser.no_target", message: error.message
+
+        logger.debug { message }
+        Failure message
+      end
+    end
+  end
+end

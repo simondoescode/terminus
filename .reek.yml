@@ -100,6 +100,8 @@ detectors:
     exclude:
       - Terminus::Action#handle_rodauth_redirect
       - Terminus::Actions::Extensions::Poll::Show#fetch
+      - Terminus::Aspects::Browser#call
+      - Terminus::Aspects::Browser#initialize
       - Terminus::Aspects::Croner#call
       - Terminus::Aspects::Extensions::Exchanges::RequestBuilder#render
       - Terminus::Aspects::Extensions::Fetcher::Client#parse
@@ -110,8 +112,8 @@ detectors:
       - Terminus::Aspects::Screens::Compressor#call
       - Terminus::Aspects::Screens::Converters::Color#convert
       - Terminus::Aspects::Screens::Converters::Monochrome#convert
-      - Terminus::Aspects::Screens::Interrupter#interrupt
       - Terminus::Aspects::Screens::Faux#initialize
+      - Terminus::Aspects::Screens::Interrupter#interrupt
       - Terminus::Aspects::Screens::Shoter#save
       - Terminus::Providers::Sidekiq#load_schedule
       - Terminus::Structs::Device#battery_voltage_to_percent

@@ -22,7 +22,6 @@ detectors:
     exclude:
       - Terminus::Aspects::Devices::Provisioner#create
       - Terminus::Aspects::Extensions::Exchanges::RequestBuilder#render
-      - Terminus::Aspects::Screens::Shoter#save
       - Terminus::Views::Helpers#default_option
   FeatureEnvy:
     exclude:
@@ -74,7 +73,7 @@ detectors:
       - Terminus::Aspects::Screens::Creator#find
       - Terminus::Aspects::Screens::Creators::TempPath#capture_input
       - Terminus::Aspects::Screens::Designer::EventStream#render_preview
-      - Terminus::Aspects::Screens::Shoter#save
+      - Terminus::Aspects::Screens::Shoter#render
       - Terminus::Aspects::Screens::TempPather#capture_input
       - Terminus::Aspects::Screens::Upserters::TempPath#capture_input
       - Terminus::IPFinder#all
@@ -114,7 +113,6 @@ detectors:
       - Terminus::Aspects::Screens::Converters::Monochrome#convert
       - Terminus::Aspects::Screens::Faux#initialize
       - Terminus::Aspects::Screens::Interrupter#interrupt
-      - Terminus::Aspects::Screens::Shoter#save
       - Terminus::Providers::Sidekiq#load_schedule
       - Terminus::Structs::Device#battery_voltage_to_percent
       - Terminus::Structs::Device#wifi_percentage

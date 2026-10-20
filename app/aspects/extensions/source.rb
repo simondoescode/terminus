@@ -33,7 +33,10 @@ module Terminus
         # Alarm#related_to= setter. Preserve alarms and all other properties.
         def without_unsupported_alarm_relationships content
           alarm_pattern = /^BEGIN:VALARM[^\r\n]*\r?\n.*?^END:VALARM[^\r\n]*(?:\r?\n|\z)/im
-          relationship_pattern = /^RELATED-TO(?:;[^:\r\n]*)?:[^\r\n]*(?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)/i
+          relationship_pattern = /
+            ^RELATED-TO(?:;[^:\r\n]*)?:[^\r\n]*
+            (?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)
+          /ix
 
           String(content).gsub(alarm_pattern) { |alarm| alarm.gsub(relationship_pattern, "") }
         end

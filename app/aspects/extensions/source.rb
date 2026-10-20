@@ -36,18 +36,18 @@ module Terminus
           skipping = false
 
           String(content).each_line.filter_map do |line|
-            if line.match?(/\\ABEGIN:VALARM\\s*\\z/i)
+            if line.match?(/\ABEGIN:VALARM\s*\z/i)
               in_alarm = true
-            elsif line.match?(/\\AEND:VALARM\\s*\\z/i)
+            elsif line.match?(/\AEND:VALARM\s*\z/i)
               in_alarm = false
             end
 
-            if in_alarm && line.match?(/\\ARELATED-TO(?:;[^:]*)?:/i)
+            if in_alarm && line.match?(/\ARELATED-TO(?:;[^:]*)?:/i)
               skipping = true
               next
             end
 
-            next if skipping && line.match?(/\\A[ \\t]/)
+            next if skipping && line.match?(/\A[ \t]/)
 
             skipping = false
             line

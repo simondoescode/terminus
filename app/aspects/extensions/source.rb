@@ -32,9 +32,10 @@ module Terminus
         # include it in alarms; the icalendar parser then calls an undefined
         # Alarm#related_to= setter. Preserve alarms and all other properties.
         def without_unsupported_alarm_relationships content
-          String(content).gsub(/^BEGIN:VALARM[^\r\n]*\r?\n.*?^END:VALARM[^\r\n]*(?:\r?\n|\z)/im) do |alarm|
-            alarm.gsub(/^RELATED-TO(?:;[^:\r\n]*)?:[^\r\n]*(?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)/i, "")
-          end
+          alarm_pattern = /^BEGIN:VALARM[^\r\n]*\r?\n.*?^END:VALARM[^\r\n]*(?:\r?\n|\z)/im
+          relationship_pattern = /^RELATED-TO(?:;[^:\r\n]*)?:[^\r\n]*(?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)/i
+
+          String(content).gsub(alarm_pattern) { |alarm| alarm.gsub(relationship_pattern, "") }
         end
 
         def from_csv content

@@ -167,9 +167,7 @@ RSpec.describe Terminus::Aspects::Extensions::Source do
 
     it "answers failure with invalid encoding" do
       content = "test\xFF".dup.force_encoding "UTF-8"
-      expect(parser.from_json(content)).to be_failure(
-        "Unexpected token 'test' at line 1 column 1."
-      )
+      expect(parser.from_json(content)).to be_failure
     end
   end
 

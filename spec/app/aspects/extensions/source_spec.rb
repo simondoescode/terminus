@@ -32,6 +32,63 @@ RSpec.describe Terminus::Aspects::Extensions::Source do
       )
     end
 
+    it "parses alarms with unsupported RELATED-TO properties" do
+      content = <<~CONTENT
+        BEGIN:VCALENDAR
+        VERSION:2.0
+        PRODID:-//Test//Test//EN
+        BEGIN:VEVENT
+        UID:alarm-test
+        DTSTAMP:20260928T200306Z
+        DTSTART:20260930T183000Z
+        DTEND:20260930T193000Z
+        SUMMARY:Calendar appointment
+        BEGIN:VALARM
+        ACTION:DISPLAY
+        DESCRIPTION:Reminder
+        TRIGGER:-PT15M
+        RELATED-TO;RELTYPE=PARENT:other-event
+         -with-folded-text
+        END:VALARM
+        END:VEVENT
+        END:VCALENDAR
+      CONTENT
+
+      result = parser.from_calendar(content)
+
+      expect(result).to be_success
+      event = result.value!.first.fetch(:events).first
+      expect(event.fetch(:summary)).to eq("Calendar appointment")
+      expect(event.fetch(:alarm)).not_to be_empty
+    end
+
+    it "preserves event RELATED-TO properties outside alarms" do
+      content = <<~CONTENT
+        BEGIN:VCALENDAR
+        VERSION:2.0
+        PRODID:-//Test//Test//EN
+        BEGIN:VEVENT
+        UID:related-event
+        DTSTAMP:20260928T200306Z
+        DTSTART:20260930T183000Z
+        RELATED-TO:parent-event
+        BEGIN:VALARM
+        ACTION:DISPLAY
+        DESCRIPTION:Reminder
+        TRIGGER:-PT15M
+        RELATED-TO:invalid-alarm-related-to
+        END:VALARM
+        END:VEVENT
+        END:VCALENDAR
+      CONTENT
+
+      result = parser.from_calendar(content)
+
+      expect(result).to be_success
+      event = result.value!.first.fetch(:events).first
+      expect(event.fetch(:related_to)).to eq("parent-event")
+    end
+
     it "answers failure with malformed content" do
       content = <<~CONTENT
         BEGIN:VCALENDAR

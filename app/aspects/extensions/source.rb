@@ -38,7 +38,7 @@ module Terminus
             (?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)
           /ix
 
-          String(content).gsub(alarm_pattern) { |alarm| alarm.gsub(relationship_pattern, "") }
+          String(content).gsub(alarm_pattern) { |alarm| alarm.gsub relationship_pattern, "" }
         end
 
         def from_csv content

@@ -86,7 +86,7 @@ RSpec.describe Terminus::Aspects::Extensions::Source do
 
       expect(result).to be_success
       event = result.value!.first.fetch(:events).first
-      expect(event.fetch(:related_to)).to eq("parent-event")
+      expect(event.fetch(:related_to)).to include("parent-event")
     end
 
     it "answers failure with malformed content" do

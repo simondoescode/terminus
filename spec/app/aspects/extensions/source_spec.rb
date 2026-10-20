@@ -54,12 +54,12 @@ RSpec.describe Terminus::Aspects::Extensions::Source do
         END:VCALENDAR
       CONTENT
 
-      result = parser.from_calendar(content)
+      result = parser.from_calendar content
 
-      expect(result).to be_success
       event = result.value!.first.fetch(:events).first
-      expect(event.fetch(:summary)).to eq("Calendar appointment")
-      expect(event.fetch(:alarm)).not_to be_empty
+      expect([event.fetch(:summary), event.fetch(:alarm).empty?]).to eq(
+        ["Calendar appointment", false]
+      )
     end
 
     it "preserves event RELATED-TO properties outside alarms" do
@@ -82,9 +82,8 @@ RSpec.describe Terminus::Aspects::Extensions::Source do
         END:VCALENDAR
       CONTENT
 
-      result = parser.from_calendar(content)
+      result = parser.from_calendar content
 
-      expect(result).to be_success
       event = result.value!.first.fetch(:events).first
       expect(event.fetch(:related_to)).to include("parent-event")
     end

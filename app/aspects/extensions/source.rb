@@ -32,26 +32,9 @@ module Terminus
         # include it in alarms; the icalendar parser then calls an undefined
         # Alarm#related_to= setter. Preserve alarms and all other properties.
         def without_unsupported_alarm_relationships content
-          in_alarm = false
-          skipping = false
-
-          String(content).each_line.filter_map do |line|
-            if line.match?(/\ABEGIN:VALARM\s*\z/i)
-              in_alarm = true
-            elsif line.match?(/\AEND:VALARM\s*\z/i)
-              in_alarm = false
-            end
-
-            if in_alarm && line.match?(/\ARELATED-TO(?:;[^:]*)?:/i)
-              skipping = true
-              next
-            end
-
-            next if skipping && line.match?(/\A[ \t]/)
-
-            skipping = false
-            line
-          end.join
+          String(content).gsub(/^BEGIN:VALARM[^\r\n]*\r?\n.*?^END:VALARM[^\r\n]*(?:\r?\n|\z)/im) do |alarm|
+            alarm.gsub(/^RELATED-TO(?:;[^:\r\n]*)?:[^\r\n]*(?:\r?\n[ \t][^\r\n]*)*(?:\r?\n|\z)/i, "")
+          end
         end
 
         def from_csv content

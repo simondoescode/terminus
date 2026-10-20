@@ -41,10 +41,6 @@ RSpec.describe Terminus::Views::Scopes::PopoverScreenContent do
             <img src="#{assets["setup.svg"]}" alt="Faux" width="800" height="480" loading="lazy">
             <figcaption>Faux</figcaption>
           </figure>
-
-          <p class="brand">
-            <img src="#{assets["logos/with_label.svg"]}" alt="Logo with Label" width="150" height="75">
-          </p>
         </dialog>
       CONTENT
     end

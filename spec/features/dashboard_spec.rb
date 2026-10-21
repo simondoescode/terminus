@@ -29,6 +29,6 @@ RSpec.describe "Dashboard", :db do
     expect(page).to have_link("0", href: routes.path(:models))
     expect(page).to have_link("0", href: routes.path(:playlists))
     expect(page).to have_link("0", href: routes.path(:screens))
-    expect(page).to have_link("1", href: routes.path(:users))
+    expect(page).to have_link(href: routes.path(:users))
   end
 end

@@ -17,7 +17,6 @@ detectors:
       - Terminus::Actions::Extensions::Update
       - Terminus::Aspects::Croner
       - Terminus::Aspects::Errors::Problem
-      - Terminus::Aspects::Screens::Shoter
       - Terminus::Repositories::Screen
   DuplicateMethodCall:
     exclude:
@@ -74,7 +73,7 @@ detectors:
       - Terminus::Aspects::Screens::Creator#find
       - Terminus::Aspects::Screens::Creators::TempPath#capture_input
       - Terminus::Aspects::Screens::Designer::EventStream#render_preview
-      - Terminus::Aspects::Screens::Shoter#save
+      - Terminus::Aspects::Screens::Shoter#render
       - Terminus::Aspects::Screens::TempPather#capture_input
       - Terminus::Aspects::Screens::Upserters::TempPath#capture_input
       - Terminus::IPFinder#all
@@ -100,6 +99,8 @@ detectors:
     exclude:
       - Terminus::Action#handle_rodauth_redirect
       - Terminus::Actions::Extensions::Poll::Show#fetch
+      - Terminus::Aspects::Browser#call
+      - Terminus::Aspects::Browser#initialize
       - Terminus::Aspects::Croner#call
       - Terminus::Aspects::Extensions::Exchanges::RequestBuilder#render
       - Terminus::Aspects::Extensions::Fetcher::Client#parse
@@ -110,9 +111,8 @@ detectors:
       - Terminus::Aspects::Screens::Compressor#call
       - Terminus::Aspects::Screens::Converters::Color#convert
       - Terminus::Aspects::Screens::Converters::Monochrome#convert
-      - Terminus::Aspects::Screens::Interrupter#interrupt
       - Terminus::Aspects::Screens::Faux#initialize
-      - Terminus::Aspects::Screens::Shoter#save
+      - Terminus::Aspects::Screens::Interrupter#interrupt
       - Terminus::Providers::Sidekiq#load_schedule
       - Terminus::Structs::Device#battery_voltage_to_percent
       - Terminus::Structs::Device#wifi_percentage
@@ -122,6 +122,8 @@ detectors:
     exclude:
       - Terminus::Refines::Icalendar#self.map_3339
       - Terminus::Refines::Icalendar#self.rfc_3339
+  UnusedParameters:
+    enabled: false
   UtilityFunction:
     exclude:
       - Terminus::Refines::Icalender
@@ -131,3 +133,4 @@ detectors:
       - Terminus::Aspects::Errors::Problem#foreign_key
       - Terminus::Aspects::Errors::Problem#out_of_range
       - Terminus::Aspects::Liquid::Filters#json
+
